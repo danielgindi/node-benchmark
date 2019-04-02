@@ -1,0 +1,36 @@
+{
+  "name": "benchmark-util",
+  "version": "1.0.0",
+  "description": "A benchmarking utility for Node.js",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint -f codeframe ./",
+    "lint-fix": "eslint -f codeframe --fix ./",
+    "test": "npm run lint && mocha ./tests/**/*.tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danielgindi/node-benchmark"
+  },
+  "keywords": [
+    "benchmark",
+    "performance"
+  ],
+  "files": [
+    "src/**/*",
+    "lib/**/*",
+    "tests/**/*",
+    "index.js"
+  ],
+  "author": "Daniel Cohen Gindi <danielgindi@gmail.com> (https://github.com/danielgindi)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danielgindi/node-benchmark/issues"
+  },
+  "homepage": "https://github.com/danielgindi/node-benchmark",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "husky": "^1.3.1",
+    "mocha": "^6.0.2"
+  }
+}
