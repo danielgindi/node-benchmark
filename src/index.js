@@ -130,8 +130,8 @@ class Benchmark {
 
     /**
      * Runs the benchmark suite
-     * @param {Object} options
-     * @param {function(BenchmarkResults)} options.onCycle
+     * @param {Object=} options
+     * @param {function(BenchmarkResults)=} options.onCycle
      * @returns {BenchmarkResults[]} results
      */
     async run(options) {
