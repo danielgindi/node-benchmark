@@ -33,15 +33,20 @@ class Benchmark {
 
     /**
      * @param {string} name
-     * @param {function} fn - supports async functions as well
+     * @param {function|options} options - pass options, or a unit function
+     * @param {function} options.prepare - function for preparing before running the benchmark for this unit
+     * @param {function} options.unit - function for running in the unit
+     * @param {function} options.teardown - function for preparing before running the benchmark for this unit
      * @returns {Benchmark} this
      */
-    add(name, fn) {
+    add(name, options) {
         const p = this._p;
 
         p.units.push({
             name: name,
-            fn: fn,
+            prepare: options ? options.prepare : null,
+            unit: typeof options === 'function' ? options : options.unit,
+            teardown: options ? options.teardown : null,
         });
 
         return this;
@@ -150,11 +155,9 @@ class Benchmark {
 
             unit.samples = [];
 
-            let fn = unit.fn;
-
-            // Run once to detect if it's an async function.
-            // Do not load the isPromise detection over the unit sampling time.
-            let fnIsPromise = isPromise(fn());
+            let unitPrepareFn = unit.prepare;
+            let unitFn = unit.unit;
+            let unitTeardownFn = unit.teardown;
 
             const doRun = async () => {
                 let startTime = Date.now();
@@ -162,7 +165,7 @@ class Benchmark {
                 let hits = 0;
 
                 while (p.aborted !== true) {
-                    let res = fn();
+                    let res = unitFn();
 
                     if (fnIsPromise) {
                         await res;
@@ -184,6 +187,13 @@ class Benchmark {
                 }
             };
 
+            if (typeof unitPrepareFn === 'function')
+                await unitPrepareFn();
+
+            // Run once to detect if it's an async function.
+            // Do not load the isPromise detection over the unit sampling time.
+            let fnIsPromise = isPromise(unitFn());
+
             for (let run = 0; run < actualRunCount; run++) {
                 // Give a chance for abort() to take place between runs
 
@@ -196,6 +206,9 @@ class Benchmark {
                     }, 0);
                 });
             }
+
+            if (typeof unitTeardownFn === 'function')
+                await unitTeardownFn();
 
             if (hasWarmupRun && unit.samples.length > 0) {
                 unit.warmup = unit.samples.shift();

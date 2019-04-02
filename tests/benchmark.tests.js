@@ -47,6 +47,36 @@ describe('Test benchmarks', async () => {
             });
     }).timeout(3000);
 
+    it(`prepare & teardown`, async () => {
+
+        let bench = new Benchmark();
+
+        let prepares = 0;
+        let teardown = 0;
+
+        await bench
+            .add(`prepare and teardown`, {
+                prepare: () => {
+                    prepares++;
+                },
+                unit: () => {
+                    assert.strictEqual(prepares, 1);
+                    assert.strictEqual(teardown, 0);
+                },
+                teardown: () => {
+                    teardown++;
+                },
+            })
+            .setWarmupTime(10)
+            .setMaxUnitTime(200)
+            .setRunsPerUnit(10)
+            .run({ });
+
+        assert.strictEqual(prepares, 1);
+        assert.strictEqual(teardown, 1);
+
+    }).timeout(500);
+
     it(`async functions`, async () => {
 
         let bench = new Benchmark();

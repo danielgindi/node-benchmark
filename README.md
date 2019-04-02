@@ -3,16 +3,17 @@
 [![npm Version](https://badge.fury.io/js/benchmark-util.png)](https://npmjs.org/package/benchmark-util)
 
 This is a small utility that supports:
-1. Benchmarks
-2. `async` functions (on top of simple synchronous functions)
-3. `.abort()` in order to, well, abort!
-4. Defining multiple units to benchmark (`.add(name, function)`)
-5. Decide how you want to present the results on your own
-6. Do a warmup run before running benchmarks for each unit (`.setWarmupTime(milliseconds)`)
-7. Set up time for benchmarking each unit (`.setMaxUnitTime(milliseconds)`) 
-8. Set up how many runs to do for each unit, which is useful for detecting deviations and unstable behavior (`.setRunsPerUnit(runs)`)
-9. `await benchmark.run(options)` for compatibility with modern `await` syntax or `.then`/`.catch`
-10. There are JSDocs for everything, which should make intellisense much easier and stricter.
+* Benchmarks
+* `async` functions (on top of simple synchronous functions)
+* `.abort()` in order to, well, abort!
+* Defining multiple units to benchmark (`.add(name, function)`)
+* Defining prepare and teardown callbacks (`.add(name, { prepare, unit, teardown })`)
+* Decide how you want to present the results on your own
+* Do a warmup run before running benchmarks for each unit (`.setWarmupTime(milliseconds)`)
+* Set up time for benchmarking each unit (`.setMaxUnitTime(milliseconds)`) 
+* Set up how many runs to do for each unit, which is useful for detecting deviations and unstable behavior (`.setRunsPerUnit(runs)`)
+* `await benchmark.run(options)` for compatibility with modern `await` syntax or `.then`/`.catch`
+* There are JSDocs for everything, which should make intellisense much easier and stricter.
 
 ## Installation:
 
@@ -45,6 +46,13 @@ npm i benchmark-util
             await new Promise(resolve => {
                 resolve(/running tiger/.test('Find a running tiger in this string'));
             });
+        })
+        .add(`Test with prepare & teardown`, {
+            prepare: () => console.log('This is me preparing'),
+            unit: () => {
+                /running tiger/.test('Find a running tiger in this string');
+            },
+            teardown: () => console.log('This is me tearing it down'),
         });
     
     let results = await bench.run({
