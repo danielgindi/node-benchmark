@@ -12,6 +12,9 @@
     "type": "git",
     "url": "https://github.com/danielgindi/node-benchmark"
   },
+  "engines": {
+    "node": ">=8"
+  },
   "keywords": [
     "benchmark",
     "performance"

@@ -1,0 +1,28 @@
+environment:
+  matrix:
+    - nodejs_version: "8"
+    - nodejs_version: "10"
+
+platform:
+  - x64
+
+install:
+  - git rev-parse HEAD
+  - ps: Install-Product node $env:nodejs_version
+  - md C:\nc
+  - npm config set cache C:\nc
+  - npm version
+  - npm install --no-optional
+
+cache:
+  - '%APPDATA%\npm-cache'
+
+test_script:
+  - npm version
+  - cmd: npm test
+
+# Don't actually build.
+build: off
+
+# Set build version format here instead of in the admin panel.
+version: "{build}"
